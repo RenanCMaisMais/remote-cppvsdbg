@@ -1,0 +1,70 @@
+{
+  "name": "remotedebugger",
+  "displayName": "Remote Debugger for cppvsdbg",
+  "description": "Allow remote debugging for cppvsdbg debug sessions",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "extensionDependencies": [
+    "ms-vscode.cpptools"
+  ],
+  "categories": [
+    "Debuggers"
+  ],
+  "activationEvents": [
+    "onDebugResolve:cppvsdbg"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "debuggers": [
+      {
+        "type": "cppvsdbg",
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "remote": {
+                "description": "Configuration related to remote debugging.",
+                "required": [
+                  "host"
+                ],
+                "properties": {
+                  "host": {
+                    "type": "string",
+                    "description": "The SSH host of the target computer.",
+                    "default": "user@hostname"
+                  },
+                  "synchronize": {
+                    "type": "object",
+                    "description": "Folders to synchronize between the guest and host computer. Note: The more folders to synchronize, the slower the initial setup will become.",
+                    "default": {
+                      "<guest-folder>": "<remote-folder>"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "cargo install --path shim --root bin/shim --no-track && tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^25.5.2",
+    "@types/vscode": "^1.110.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  }
+}
