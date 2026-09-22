@@ -8,10 +8,10 @@ import { readdir, readFile } from "fs/promises";
 import { outputChannelName } from "./logger";
 
 interface DebugConfiguration extends vscode.DebugConfiguration {
-  environment: Object[];
   remote: {
     host: string;
     synchronize: Object;
+    interactive: boolean;
   };
 }
 
@@ -45,6 +45,7 @@ export class DebugConfigurationProvider
 
     // Allows retriaval of the SSH host by the shim process.
     process.env["VSDBG_SSH_HOST"] = config.remote.host;
+    process.env["VSDBG_INTERACTIVE"] = config.remote.interactive ? "TRUE" : "FALSE";
 
     await shim.Setup();
 
@@ -67,9 +68,22 @@ export class DebugConfigurationProvider
           "bin",
         );
 
+        const executablesPath = vscode.Uri.joinPath(
+          Context.extensionURI,
+          "bin",
+          "shim",
+          "bin",
+        );
+
         let awaits: Thenable<void>[] = [];
         awaits.push(
           synchronizer.Synchronize(vsdbgPath.fsPath, ".cppvsdbg/bin"),
+        );
+
+        awaits.push(
+          synchronizer.Synchronize(executablesPath.fsPath, ".cppvsdbg/spawner", {
+            files: ["spawner.exe"],
+          }),
         );
 
         const extensionsDir = path.join(".cppvsdbg", "extensions");

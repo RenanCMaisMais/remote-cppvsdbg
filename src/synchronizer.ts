@@ -11,7 +11,11 @@ export class Synchronizer {
     [this.user, this.host] = host.split("@");
   }
 
-  Synchronize(guestPath: string, hostPath: string): Promise<void> {
+  Synchronize(
+    guestPath: string,
+    hostPath: string,
+    { files = [] }: { files?: string[] } = {},
+  ): Promise<void> {
     const rclonePath = vscode.Uri.joinPath(
       Context.extensionURI,
       "bin",
@@ -20,14 +24,20 @@ export class Synchronizer {
     );
 
     return new Promise<void>((resolve, reject) => {
-      const rclone = cp.spawn(rclonePath.fsPath, [
+      let args: string[] = [
         "sync",
         "--contimeout",
         "5s",
         "-q",
         guestPath,
         `:sftp,host=${this.host},user=${this.user}:${hostPath}`,
-      ]);
+      ];
+
+      if (files.length > 0) {
+        args.push("--include", ...files);
+      }
+
+      const rclone = cp.spawn(rclonePath.fsPath, args);
 
       rclone.stdout.on("data", (data: Buffer) => {
         log(data.toString());

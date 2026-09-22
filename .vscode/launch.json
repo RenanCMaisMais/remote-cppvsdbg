@@ -21,9 +21,13 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug Rust Shim",
-			"program": "${workspaceFolder}/shim/target/debug/shim.exe",
+			"program": "${workspaceFolder}/shim/target/debug/vsdbg.exe",
 			"args": [],
-			"cwd": "${workspaceFolder}/shim/target/debug"
+			"cwd": "${workspaceFolder}/shim/target/debug",
+			"env": {
+				"VSDBG_SSH_HOST": "some@thing",
+				"VSDBG_INTERACTIVE": "TRUE"
+			}
 		},
 		{
 			"type": "lldb",
