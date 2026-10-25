@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import cp from "child_process";
 import { log } from "./logger";
 import { Context } from "./state";
+import { setTimeout } from "timers/promises";
 
 export class Synchronizer {
   private readonly host: string;
@@ -45,11 +46,20 @@ export class Synchronizer {
 
       rclone.stderr.on("data", (data: Buffer) => {
         log(data.toString(), "ERROR");
-        reject("Failed to synchronize folders");
       });
 
-      rclone.on("close", () => {
-        resolve();
+      rclone.on("error", (error: Error) => {
+        reject(error);
+      });
+
+      rclone.on("close", (code, signal) => {
+        if (code === 0) {
+          resolve();
+          return;
+        }
+
+        const reason = signal ? `signal ${signal}` : `exit code ${code}`;
+        reject(new Error(`Failed to synchronize folders (${reason})`));
       });
     });
   }
