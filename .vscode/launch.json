@@ -27,7 +27,8 @@
 			"env": {
 				"VSDBG_SSH_HOST": "some@thing",
 				"VSDBG_INTERACTIVE": "TRUE"
-			}
+			},
+			"console": "internalConsole"
 		},
 		{
 			"type": "lldb",

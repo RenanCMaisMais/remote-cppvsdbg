@@ -94,8 +94,10 @@ export class DebugConfigurationProvider
           );
         }
 
-        for (const [key, value] of Object.entries(config.synchronize)) {
-          awaits.push(synchronizer.Synchronize(key, value));
+        if (config.synchronize) {
+          for (const [key, value] of Object.entries(config.synchronize)) {
+            awaits.push(synchronizer.Synchronize(key, value));
+          }
         }
 
         return Promise.all(awaits);

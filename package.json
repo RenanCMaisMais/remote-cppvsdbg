@@ -2,7 +2,7 @@
   "name": "remotedebugger",
   "displayName": "Remote Debugger for cppvsdbg",
   "description": "Allow remote debugging for cppvsdbg debug sessions",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.110.0"
   },
@@ -43,7 +43,7 @@
                   },
                   "interactive": {
                     "type": "boolean",
-                    "description": "Wether the debuggee should be visible for interaction.",
+                    "description": "Whether the debuggee should be visible for interaction.",
                     "default": false
                   }
                 }
