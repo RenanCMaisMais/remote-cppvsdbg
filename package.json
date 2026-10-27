@@ -2,7 +2,7 @@
   "name": "remotedebugger",
   "displayName": "Remote Debugger for cppvsdbg",
   "description": "Allow remote debugging for cppvsdbg debug sessions",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.110.0"
   },

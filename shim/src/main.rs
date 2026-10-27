@@ -64,8 +64,9 @@ async fn connect(host: &str) -> io::Result<TcpStream> {
     
         $Action = New-ScheduledTaskAction -Execute \"%USERPROFILE%/.cppvsdbg/spawner/spawner.exe\"
         $Principal = New-ScheduledTaskPrincipal -GroupId $UsersGroup -RunLevel Highest
+        $Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries
     
-        Register-ScheduledTask -TaskName $TaskName -Action $Action -Principal $Principal
+        Register-ScheduledTask -TaskName $TaskName -Action $Action -Principal $Principal -Settings $Settings
         Start-ScheduledTask -TaskName $TaskName
     
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
@@ -88,7 +89,7 @@ async fn connect(host: &str) -> io::Result<TcpStream> {
         // For some reason the command is only getting parsed up to the first newline, so flattening it is required
         let flat_command = COMMAND.replace("\n", ";");
 
-        let result = Command::new("ssh")
+        Command::new("ssh")
             .args([
                 "-o",
                 "StrictHostKeyChecking=no",
@@ -101,12 +102,8 @@ async fn connect(host: &str) -> io::Result<TcpStream> {
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
-            .status()
-            .expect("The SSH client should be installed");
-
-        if !result.success() {
-            panic!("failed to spawn child");
-        }
+            .spawn()
+            .expect("The SSH client should be installed")
     };
 
     match pipe {
